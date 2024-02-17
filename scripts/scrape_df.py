@@ -47,6 +47,26 @@ def album_get_tracklist(url):
             'song_url': url} for number, title, url in zip(number, clean_track, url)]
     return tracklist
 
+def song_get_artists(url):
+    """Returns artist(s)/performer(s) of given Genius song URL.
+
+       Also checks if there's a feature on the song; if yes, the featured
+       artist/performer is included.
+    """
+    song_page = requests.get(url).text
+    selector = Selector(text=song_page)
+
+    raw_artists = selector.xpath('//div[@class="HeaderArtistAndTracklistdesktop__Container-sc-4vdeb8-0 hjExsS"]/span/span//text()').get()
+    artists = re.split(',\s|\s&\s', raw_artists)
+
+    feat_check = selector.xpath('//p[contains(@class,"HeaderCredits__Label")]/text()').get()
+
+    if feat_check == 'Featuring':
+        raw_feat = selector.xpath('string(//div[contains(@class, "HeaderCredits__List")])').get()
+        feat = re.split(',\s|\s&\s', raw_feat)
+        artists.extend(feat)
+    return artists
+
 def song_get_lyrics(url):
     """Returns lyrics of given Genius song URL."""
     song_page = requests.get(url).text
@@ -103,6 +123,7 @@ def data_collection(artist, albums_dict):
 
     song_urls = [track['song_url'] for list in tracklists for track in list]
 
+    song_artists = [song_get_artists(song) for song in song_urls]
     song_lyrics = [song_get_lyrics(song) for song in song_urls]
     song_writers = [song_get_credits(song, 'writers') for song in song_urls]
     song_producers = [song_get_credits(song, 'producers') for song in song_urls]
@@ -112,7 +133,8 @@ def data_collection(artist, albums_dict):
 
     for album in tracklists:
         for track in album:
-            track.update({'song_lyrics':song_lyrics[list_index], 
+            track.update({'song_artists':song_artists[list_index], 
+                          'song_lyrics':song_lyrics[list_index], 
                           'song_writers': song_writers[list_index], 
                           'song_producers': song_producers[list_index], 
                           'song_tags': song_tags[list_index]})
@@ -130,5 +152,5 @@ def data_collection(artist, albums_dict):
                                                                            'album_era'])
     
     df = raw_df.reindex(columns=['album_title', 'album_url', 'album_era', 'album_track_number', 'song_title', 
-                                 'song_url', 'song_lyrics', 'song_writers', 'song_producers', 'song_tags'])
+                                 'song_url', 'song_artists', 'song_lyrics', 'song_writers', 'song_producers', 'song_tags'])
     return df
