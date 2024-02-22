@@ -44,3 +44,12 @@ def add_single_song(df, album_url, album_era, song_url):
     new_df = pd.DataFrame([new_row], columns=df.columns)
     df = pd.concat([df, new_df], ignore_index=True)
     return df
+
+def change_credit_name(series, old_name, new_name):
+    """Changes name of individual in song credits.
+
+       Can only be done in song_artists, song_writers, or song_producers
+       since this function assumes a list value in series.
+    """
+    series = series.apply(lambda list: [new_name if string == old_name else string for string in list])
+    return series
