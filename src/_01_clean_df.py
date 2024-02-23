@@ -1,8 +1,10 @@
+import re
+
 import pandas as pd
 import requests
 from parsel import Selector
 
-from scripts.scrape_df import *
+from src import _01_scrape_df as scrape
 
 def drop_songs(dataframe, song_list, remove_duplicates=True):
     """Removes rows for given songs from discography dataframe.
@@ -34,11 +36,11 @@ def add_single_song(df, album_url, album_era, song_url):
     number_string = song_selector.xpath('//div[contains(@class, "HeaderArtistAndTracklist")]/text()').get()
     number = int(re.sub('\D','', number_string))
 
-    artists = song_get_artists(song_url)
-    lyrics = song_get_lyrics(song_url)
-    writers = song_get_credits(song_url, 'writers')
-    producers = song_get_credits(song_url, 'producers')
-    tags = song_get_tags(song_url)
+    artists = scrape.song_get_artists(song_url)
+    lyrics = scrape.song_get_lyrics(song_url)
+    writers = scrape.song_get_credits(song_url, 'writers')
+    producers = scrape.song_get_credits(song_url, 'producers')
+    tags = scrape.song_get_tags(song_url)
 
     new_row = [album_title, album_url, album_era, number, song_title, song_url, artists, lyrics, writers, producers, tags]
     new_df = pd.DataFrame([new_row], columns=df.columns)

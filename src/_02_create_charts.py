@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, color_dict, 
-                      chart_title, x_label, y_label, legend_title):
+                      chart_title, x_label, y_label, legend_title, subplot_pos, legend=True):
     """Creates stacked bar chart in matplotlib.
 
        Args:
@@ -18,7 +18,8 @@ def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, c
            x_label: string, label on x-axis
            y_label: string, label on y-axis
            legend_title: string, title for color legend
-           subplot_placement: axes object with subplot position, such as axes[0] or axes[1,0]
+           subplot_pos: axes object with subplot position, such as axes[0] or axes[1,0]
+           legend: boolean, defaults to True, displays legend
     """
     df_pivot = df.pivot_table(index=category_field, columns=legend_field, 
                               values=value_field, fill_value=0, aggfunc='sum')
@@ -42,5 +43,7 @@ def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, c
         df_chart.bar_label(container, labels=labels, label_type='center', color=color)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.title(chart_title)
-    plt.legend(title=legend_title, bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.title.set_title(chart_title)
+    
+    if legend == True:
+        plt.legend(title=legend_title, bbox_to_anchor=(1.05, 1), loc='upper left')
