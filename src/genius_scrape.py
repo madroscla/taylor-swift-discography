@@ -1,8 +1,24 @@
+"""Functions breaking down the webbscraping process to format resulting dataframe."""
+
+import csv
 import re
 
 import pandas as pd
 import requests
 from parsel import Selector
+
+def create_dict_from_file(csv_name):
+    """Creates album dictionary from given CSV file.
+
+       Dictionary layout: {'album_title': 'album_era'}, assumes
+       CSV has header rows
+    """
+    dict = {}
+    with open('data/csv/{}'.format(csv_name), 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            dict[row['album_title']] = row['album_era']
+    return dict
 
 def artist_clean_name(name):
     """Formats the artist name for Genius URLs."""
@@ -10,7 +26,7 @@ def artist_clean_name(name):
     return cleaned
 
 def album_clean_titles(album_list):
-    """Formats the album title for Genius URLs."""
+    """Formats album titles in given list for Genius URLs."""
     cleaned = []
     for title in album_list:
         title = re.sub('[^\w\s]|\s-|\'','', title)
@@ -41,7 +57,6 @@ def album_get_tracklist(url):
         if title != '':
             clean_track.append(title)
 
-    
     tracklist = [{'album_track_number': number,
             'song_title': title,
             'song_url': url} for number, title, url in zip(number, clean_track, url)]
@@ -111,7 +126,7 @@ def song_get_credits(url, credit):
     credits = [name for name in raw_list if name not in dropped]
     return credits
 
-def data_collection(artist, albums_dict):
+def create_discography(artist, albums_dict):
     """Compiles all webscraping data into one discography dataframe."""
     albums = list(albums_dict.keys())
     eras = list(albums_dict.values())

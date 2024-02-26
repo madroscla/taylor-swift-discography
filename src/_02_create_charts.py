@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, color_dict, 
-                      chart_title, x_label, y_label, legend_title, subplot_pos, legend=True):
+                      chart_title, x_label, y_label, subplot_pos, legend=False, legend_title=''):
     """Creates stacked bar chart in matplotlib.
 
        Args:
@@ -17,9 +17,9 @@ def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, c
            chart_title: string, title of chart
            x_label: string, label on x-axis
            y_label: string, label on y-axis
-           legend_title: string, title for color legend
            subplot_pos: axes object with subplot position, such as axes[0] or axes[1,0]
-           legend: boolean, defaults to True, displays legend
+           legend: boolean, defaults to False, displays legend
+           legend_title: string, defaults to empty, title for color legend
     """
     df_pivot = df.pivot_table(index=category_field, columns=legend_field, 
                               values=value_field, fill_value=0, aggfunc='sum')
@@ -27,7 +27,8 @@ def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, c
     
     df_chart = df_pivot.plot(kind=bar_type, figsize=(10, 10), width=0.7,
                              stacked=True, 
-                             color=[color_dict[key] for key in df_pivot.keys()])
+                             color=[color_dict[key] for key in df_pivot.keys()],
+                             ax=subplot_pos, legend=legend)
     for container in df_chart.containers:
         r = container.patches[0].get_facecolor()[0]
         g = container.patches[0].get_facecolor()[1]
@@ -43,7 +44,7 @@ def stacked_bar_chart(bar_type, df, category_field, value_field, legend_field, c
         df_chart.bar_label(container, labels=labels, label_type='center', color=color)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.title.set_title(chart_title)
+    plt.title(chart_title)
     
     if legend == True:
         plt.legend(title=legend_title, bbox_to_anchor=(1.05, 1), loc='upper left')

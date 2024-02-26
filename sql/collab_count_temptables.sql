@@ -68,3 +68,27 @@ FROM
     LEFT JOIN artists sa ON s.song_title = sa.song_title
 GROUP BY
     a.album_era, sa.song_artist;
+
+-- Temp table of total amount of collaborators per era
+DROP 
+    TABLE IF EXISTS temp.collab_count_era;
+CREATE TABLE temp.collab_count_era (
+    era TEXT,
+    writers INTEGER,
+    producers INTEGER,
+    artists INTEGER
+);
+INSERT INTO temp.collab_count_era 
+SELECT 
+    a.album_era AS era,
+    COUNT(DISTINCT w.song_writer) as writers,
+    COUNT(DISTINCT p.song_producer) as producers,
+    COUNT(DISTINCT sa.song_artist) as artists
+FROM 
+    albums a
+    LEFT JOIN songs s ON a.album_title = s.album_title
+    LEFT JOIN writers w ON s.song_title = w.song_title
+    LEFT JOIN producers p ON s.song_title = p.song_title
+    LEFT JOIN artists sa ON s.song_title = sa.song_title
+GROUP BY
+    a.album_era

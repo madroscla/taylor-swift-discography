@@ -3,13 +3,13 @@ The following query is written to work in a SQLite database, specifically throug
 Depending on SQL dialect and database engine, this query may need to be modified.
 */
 
--- Combines collaborators with only one credit into one umbrella group
+-- Combines collaborators with few credit into one umbrella group
 -- to save space on charts, also filters out Taylor Swift herself
 WITH CollaboratorsFiltered AS (
     SELECT
         era,
         CASE
-            WHEN total_credits = 1 THEN 'One-Time Collaborators'
+            WHEN total_credits / 3 <= 1 THEN 'Other Collaborators'
             ELSE collaborator
         END AS collaborator,
         writer_count,
@@ -21,7 +21,7 @@ WITH CollaboratorsFiltered AS (
         collaborator != 'Taylor Swift'
 )
 -- Aggregates writer_count, producer_count, artist_count by era, collaborator to account
--- for new umbrella group 'One-Time Collaborators', ready for pandas conversion
+-- for new umbrella group 'Other Collaborators', ready for pandas conversion
 SELECT
     era,
     collaborator,
