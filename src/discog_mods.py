@@ -41,35 +41,36 @@ def drop_songs_from_file(df, csv_name, drop_duplicates=True):
             df = drop_song(df, song_title, False)
     return df
 
-def add_song(df, album_url, album_era, song_url):
+def add_song(df, album_url, category, song_url):
     """Adds new song to discography dataframe.
 
-       Data is collected using the given variables (album_url, album_era, and song_url),
+       Data is collected using the given variables (album_url, category, and song_url),
        added to a temporary new dataframe before being concatenated to the original. This is
        also used to add songs without albums (e.g. promo singles).
     """
     album_checker = True if album_url == '' else False
-    album_url_checker = None if album_checker == True else album_url
+    album_url_checker = 'NA' if album_checker == True else album_url
     
-    album_page = None if album_checker == True else requests.get(album_url).text
-    album_selector = None if album_checker == True else Selector(text=album_page)
+    album_page = 'NA' if album_checker == True else requests.get(album_url).text
+    album_selector = 'NA' if album_checker == True else Selector(text=album_page)
 
     song_page = requests.get(song_url).text
     song_selector = Selector(text=song_page)
 
-    album_title = None if album_url == '' else album_selector.xpath('//h1[contains(@class, "header_with_cover_art")]//text()').get()
+    album_title = 'NA' if album_url == '' else album_selector.xpath('//h1[contains(@class, "header_with_cover_art")]//text()').get()
     song_title = song_selector.xpath('//h1[contains(@class, "SongHeaderdesktop")]//text()').get()
 
-    number_string = None if album_checker == True else song_selector.xpath('//div[contains(@class, "HeaderArtistAndTracklist")]/text()').get()
-    number = None if album_checker == True else int(re.sub('\D','', number_string))
+    number_string = 'NA' if album_checker == True else song_selector.xpath('//div[contains(@class, "HeaderArtistAndTracklist")]/text()').get()
+    number = 0 if album_checker == True else int(re.sub('\D','', number_string))
 
     artists = genius_scrape.song_get_artists(song_url)
+    release_date, page_views = genius_scrape.song_get_metadata(song_url)
     lyrics = genius_scrape.song_get_lyrics(song_url)
     writers = genius_scrape.song_get_credits(song_url, 'writers')
     producers = genius_scrape.song_get_credits(song_url, 'producers')
     tags = genius_scrape.song_get_tags(song_url)
 
-    new_row = [album_title, album_url_checker, album_era, number, song_title, song_url, artists, lyrics, writers, producers, tags]
+    new_row = [album_title, album_url_checker, category, number, song_title, song_url, artists, release_date, page_views, lyrics, writers, producers, tags]
     new_df = pd.DataFrame([new_row], columns=df.columns)
     df = pd.concat([df, new_df], ignore_index=True)
     return df
@@ -80,9 +81,9 @@ def add_songs_from_file(df, csv_name):
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             album_url = row['album_url']
-            album_era = row['album_era']
+            category = row['category']
             song_url = row['song_url']
-            df = add_song(df, album_url, album_era, song_url)
+            df = add_song(df, album_url, category, song_url)
     return df
 
 def change_credit_name(series, old_name, new_name):
@@ -102,11 +103,11 @@ def convert_to_db(df, db_name):
     """
     connection = sql.connect('data/{}'.format(db_name))
 
-    albums = df[['album_title','album_url', 'album_era']].drop_duplicates(subset=['album_title','album_url'])
+    albums = df[['album_title','album_url', 'category']].drop_duplicates(subset=['album_title','album_url'])
     albums.reset_index(inplace=True, drop=True)
     albums.to_sql('albums', connection, if_exists='replace')
     
-    songs = df[['song_title','album_title', 'album_track_number', 'song_url', 'song_lyrics']]
+    songs = df[['song_title','album_title', 'album_track_number', 'song_url', 'song_release_date', 'song_page_views', 'song_lyrics']]
     songs.reset_index(inplace=True, drop=True)
     songs.to_sql('songs', connection, if_exists='replace')
 

@@ -2,6 +2,7 @@
 
 import csv
 import re
+from datetime import datetime
 
 import pandas as pd
 import requests
@@ -10,14 +11,14 @@ from parsel import Selector
 def create_dict_from_file(csv_name):
     """Creates album dictionary from given CSV file.
 
-       Dictionary layout: {'album_title': 'album_era'}, assumes
+       Dictionary layout: {'album_title': 'category'}, assumes
        CSV has header rows
     """
     dict = {}
     with open('data/csv/{}'.format(csv_name), 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
-            dict[row['album_title']] = row['album_era']
+            dict[row['album_title']] = row['category']
     return dict
 
 def artist_clean_name(name):
@@ -34,13 +35,13 @@ def album_clean_titles(album_list):
         cleaned.append(title)
     return cleaned
 
-def album_get_tracklist(url):
+def album_get_tracklist(album_url):
     """Returns tracklist of given Genius album URL.
 
       Includes track number, song title, and link to the lyrics page
       for each song.
    """
-    album_page = requests.get(url).text
+    album_page = requests.get(album_url).text
     selector = Selector(text=album_page)
     
     number = selector.xpath(
@@ -62,13 +63,13 @@ def album_get_tracklist(url):
             'song_url': url} for number, title, url in zip(number, clean_track, url)]
     return tracklist
 
-def song_get_artists(url):
+def song_get_artists(song_url):
     """Returns artist(s)/performer(s) of given Genius song URL.
 
        Also checks if there's a feature on the song; if yes, the featured
        artist/performer is included.
     """
-    song_page = requests.get(url).text
+    song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
 
     raw_artists = selector.xpath('//div[@class="HeaderArtistAndTracklistdesktop__Container-sc-4vdeb8-0 hjExsS"]/span/span//text()').get()
@@ -82,9 +83,35 @@ def song_get_artists(url):
         artists.extend(feat)
     return artists
 
-def song_get_lyrics(url):
+def song_get_metadata(song_url):
+    """Returns song release date and page views of Given song URL."""
+    song_page = requests.get(song_url).text
+    selector = Selector(text=song_page)
+    metadata = selector.xpath('//div[contains(@class,"MetadataStats__Container")]/span/span/text()').getall()
+    
+    date_string = metadata[0]
+    date_string = re.sub('[^\w\s]+','', date_string)
+    date = datetime.strptime(date_string, '%b %d %Y')
+
+    if len(metadata) == 3:
+        views_string = metadata[2]
+        views_string = views_string.split(' ')[0]
+        multiplier = int
+        match views_string[-1]:
+            case 'M':
+                multiplier = 1000000
+            case 'K':
+                multiplier = 1000
+            case _:
+                multiplier = 1
+        views = int(float(views_string[0:len(views_string)-1]) * multiplier)
+    else:
+        views = 0
+    return date, views
+
+def song_get_lyrics(song_url):
     """Returns lyrics of given Genius song URL."""
-    song_page = requests.get(url).text
+    song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
 
     raw_lyrics = selector.xpath('//div[@data-lyrics-container="true"]//text()').getall()
@@ -97,15 +124,15 @@ def song_get_lyrics(url):
     lyrics = re.sub('^\s', '', lyrics)
     return lyrics
 
-def song_get_tags(url):
+def song_get_tags(song_url):
     """Returns genre tags of given Genius song URL."""
-    song_page = requests.get(url).text
+    song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
 
     tags = selector.xpath('//div[@class="SongTags__Container-xixwg3-1 bZsZHM"]//text()').getall()
     return tags
 
-def song_get_credits(url, credit):
+def song_get_credits(song_url, credit):
     """Returns list of writers/producers of given Genius song URL.
 
        Variable 'credit' has to be either 'producers' or 'writers' and will
@@ -116,7 +143,7 @@ def song_get_credits(url, credit):
     elif credit == 'producers':
         query = 'Produced By'
     
-    song_page = requests.get(url).text
+    song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
     raw_list = selector.xpath(
         '//div[@class="SongInfo__Credit-nekw6x-3 fognin" and contains(., "{}")]//text()'.format(query)
@@ -139,6 +166,8 @@ def create_discography(artist, albums_dict):
     song_urls = [track['song_url'] for list in tracklists for track in list]
 
     song_artists = [song_get_artists(song) for song in song_urls]
+    song_metadata = [song_get_metadata(song) for song in song_urls]
+    song_release_date, song_page_views = [list(field) for field in list(zip(*song_metadata))]
     song_lyrics = [song_get_lyrics(song) for song in song_urls]
     song_writers = [song_get_credits(song, 'writers') for song in song_urls]
     song_producers = [song_get_credits(song, 'producers') for song in song_urls]
@@ -148,7 +177,9 @@ def create_discography(artist, albums_dict):
 
     for album in tracklists:
         for track in album:
-            track.update({'song_artists':song_artists[list_index], 
+            track.update({'song_artists':song_artists[list_index],
+                          'song_release_date':song_release_date[list_index],
+                          'song_page_views':song_page_views[list_index], 
                           'song_lyrics':song_lyrics[list_index], 
                           'song_writers': song_writers[list_index], 
                           'song_producers': song_producers[list_index], 
@@ -157,15 +188,16 @@ def create_discography(artist, albums_dict):
         
     collection = [{'album_title': album,
                    'album_url': url,
-                   'album_era': era,
+                   'category': era,
                    'album_tracklist': list} for album, url, era, list in zip(albums, 
                                                                                    album_urls, 
                                                                                    eras, 
                                                                                    tracklists)]
     raw_df = pd.json_normalize(data=collection, record_path='album_tracklist', meta=['album_title', 
                                                                            'album_url', 
-                                                                           'album_era'])
+                                                                           'category'])
     
-    df = raw_df.reindex(columns=['album_title', 'album_url', 'album_era', 'album_track_number', 'song_title', 
-                                 'song_url', 'song_artists', 'song_lyrics', 'song_writers', 'song_producers', 'song_tags'])
+    df = raw_df.reindex(columns=['album_title', 'album_url', 'category', 'album_track_number', 'song_title', 
+                                 'song_url', 'song_artists', 'song_release_date', 'song_page_views', 
+                                 'song_lyrics', 'song_writers', 'song_producers', 'song_tags'])
     return df
