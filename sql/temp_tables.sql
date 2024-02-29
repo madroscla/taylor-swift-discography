@@ -4,6 +4,7 @@ Depending on SQL dialect and database engine, this query may need to be modified
 */
 
 -- Temp table of total number of credits (writers, producers, artists) per song
+-- Used in section "Most Collaborative Eras"
 DROP 
     TABLE IF EXISTS temp.credit_counts_per_song;
 CREATE TABLE temp.credit_counts_per_song (
@@ -29,6 +30,7 @@ GROUP BY
     s.song_title;
 
 -- Temp table of total songs and total number of credits (writers, producers, artists) per era
+-- Used in section "Most Collaborative Eras"
 DROP 
     TABLE IF EXISTS temp.credit_counts_per_era;
 CREATE TABLE temp.credit_counts_per_era (
@@ -51,7 +53,33 @@ FROM
 GROUP BY
     a.category;
 
+-- Temp table of total amounts of unique writers/producers/artists per era
+-- Used in section "Most Collaborative Eras"
+DROP 
+    TABLE IF EXISTS temp.unique_credits_per_era;
+CREATE TABLE temp.unique_credits_per_era (
+    era TEXT,
+    unique_writers INTEGER,
+    unique_producers INTEGER,
+    unique_artists INTEGER
+);
+INSERT INTO temp.unique_credits_per_era 
+SELECT 
+    a.category AS era,
+    COUNT(DISTINCT w.song_writer) as unique_writers,
+    COUNT(DISTINCT p.song_producer) as unique_producers,
+    COUNT(DISTINCT sa.song_artist) as unique_artists
+FROM 
+    albums a
+    LEFT JOIN songs s ON a.album_title = s.album_title
+    LEFT JOIN writers w ON s.song_title = w.song_title
+    LEFT JOIN producers p ON s.song_title = p.song_title
+    LEFT JOIN artists sa ON s.song_title = sa.song_title
+GROUP BY
+    a.category;
+
 -- Temp table of musicians per song, regardless of contribution
+-- Used in section "Frequent Collaborators"
 DROP 
     TABLE IF EXISTS temp.musicians_per_song;
 CREATE TABLE temp.musicians_per_song (
@@ -99,4 +127,4 @@ SELECT
 FROM
     musicians
 GROUP BY
-    era, song_title, musician
+    era, song_title, musician;
