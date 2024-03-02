@@ -11,7 +11,7 @@ import requests
 import sqlite3 as sql
 from parsel import Selector
 
-from src import genius_scrape
+from . import genius_scrape
 
 def drop_song(df, song_name, drop_duplicates=True):
     """Removes rows for given songs from discography dataframe.
@@ -34,7 +34,7 @@ def drop_songs_from_file(df, csv_name, drop_duplicates=True):
     if drop_duplicates == True:
         df = df.drop_duplicates(subset=['song_title'])
         
-    with open('data/csv/{}'.format(csv_name), 'r') as csv_file:
+    with open(csv_name, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             song_title = row['song_title']
@@ -61,7 +61,7 @@ def add_song(df, album_url, category, song_url):
     song_title = song_selector.xpath('//h1[contains(@class, "SongHeaderdesktop")]//text()').get()
 
     number_string = 'NA' if album_checker == True else song_selector.xpath('//div[contains(@class, "HeaderArtistAndTracklist")]/text()').get()
-    number = 0 if album_checker == True else int(re.sub('\D','', number_string))
+    number = 0 if album_checker == True else int(re.sub(r'\D','', number_string))
 
     artists = genius_scrape.song_get_artists(song_url)
     release_date, page_views = genius_scrape.song_get_metadata(song_url)
@@ -77,7 +77,7 @@ def add_song(df, album_url, category, song_url):
 
 def add_songs_from_file(df, csv_name):
     """Adds multiple songs at once from given CSV file."""
-    with open('data/csv/{}'.format(csv_name), 'r') as csv_file:
+    with open(csv_name, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             album_url = row['album_url']
@@ -101,7 +101,7 @@ def convert_to_db(df, db_name):
        By default makes six tables (albums, songs, artists, writers,
        producers, tags), replacing them if they already exist.
     """
-    connection = sql.connect('data/{}'.format(db_name))
+    connection = sql.connect(db_name)
 
     albums = df[['album_title','album_url', 'category']].drop_duplicates(subset=['album_title','album_url'])
     albums.reset_index(inplace=True, drop=True)

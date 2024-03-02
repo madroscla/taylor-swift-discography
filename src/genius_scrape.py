@@ -15,7 +15,7 @@ def create_dict_from_file(csv_name):
        CSV has header rows
     """
     dict = {}
-    with open('data/csv/{}'.format(csv_name), 'r') as csv_file:
+    with open(csv_name, 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             dict[row['album_title']] = row['category']
@@ -23,15 +23,15 @@ def create_dict_from_file(csv_name):
 
 def artist_clean_name(name):
     """Formats the artist name for Genius URLs."""
-    cleaned = re.sub('\s', '-', name)
+    cleaned = re.sub(r'\s', '-', name)
     return cleaned
 
 def album_clean_titles(album_list):
     """Formats album titles in given list for Genius URLs."""
     cleaned = []
     for title in album_list:
-        title = re.sub('[^\w\s]|\s-|\'','', title)
-        title = re.sub('\s', '-', title)
+        title = re.sub(r'[^\w\s]|\s-|\'','', title)
+        title = re.sub(r'\s', '-', title)
         cleaned.append(title)
     return cleaned
 
@@ -52,8 +52,8 @@ def album_get_tracklist(album_url):
     clean_track = []
     
     for title in track:
-        title = re.sub('\n|\u200b', '', title)
-        title = re.sub('\xa0', ' ', title)
+        title = re.sub(r'\n|\u200b', '', title)
+        title = re.sub(r'\xa0', ' ', title)
         title = title.strip()
         if title != '':
             clean_track.append(title)
@@ -73,13 +73,13 @@ def song_get_artists(song_url):
     selector = Selector(text=song_page)
 
     raw_artists = selector.xpath('//div[@class="HeaderArtistAndTracklistdesktop__Container-sc-4vdeb8-0 hjExsS"]/span/span//text()').get()
-    artists = re.split(',\s|\s&\s', raw_artists)
+    artists = re.split(r',\s|\s&\s', raw_artists)
 
     feat_check = selector.xpath('//p[contains(@class,"HeaderCredits__Label")]/text()').get()
 
     if feat_check == 'Featuring':
         raw_feat = selector.xpath('string(//div[contains(@class, "HeaderCredits__List")])').get()
-        feat = re.split(',\s|\s&\s', raw_feat)
+        feat = re.split(r',\s|\s&\s', raw_feat)
         artists.extend(feat)
     return artists
 
@@ -88,10 +88,15 @@ def song_get_metadata(song_url):
     song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
     metadata = selector.xpath('//div[contains(@class,"MetadataStats__Container")]/span/span/text()').getall()
+
+    date_check = len(metadata) >= 1 and 'viewer' not in metadata[0]
     
-    date_string = metadata[0]
-    date_string = re.sub('[^\w\s]+','', date_string)
-    date = datetime.strptime(date_string, '%b %d %Y')
+    if date_check == True:
+        date_string = metadata[0]
+        date_string = re.sub(r'[^\w\s]+','', date_string)
+        date = datetime.strptime(date_string, '%b %d %Y') if len(date_string) > 4 else datetime.strptime(date_string, '%Y')
+    else:
+        date = None
 
     if len(metadata) == 3:
         views_string = metadata[2]
@@ -115,13 +120,13 @@ def song_get_lyrics(song_url):
     selector = Selector(text=song_page)
 
     raw_lyrics = selector.xpath('//div[@data-lyrics-container="true"]//text()').getall()
-    lyrics_list = [re.sub('\u2005', ' ', lyric) for lyric in raw_lyrics]
+    lyrics_list = [re.sub(r'\u2005', ' ', lyric) for lyric in raw_lyrics]
     lyrics = ' '.join(lyrics_list)
-    lyrics = re.sub('\[.*?\]', '', lyrics)
-    lyrics = re.sub('\s\s', ' ', lyrics)
-    lyrics = re.sub('\(\s', '(', lyrics)
-    lyrics = re.sub('\s\)', ')', lyrics)
-    lyrics = re.sub('^\s', '', lyrics)
+    lyrics = re.sub(r'\[.*?\]', '', lyrics)
+    lyrics = re.sub(r'\s\s', ' ', lyrics)
+    lyrics = re.sub(r'\(\s', '(', lyrics)
+    lyrics = re.sub(r'\s\)', ')', lyrics)
+    lyrics = re.sub(r'^\s', '', lyrics)
     return lyrics
 
 def song_get_tags(song_url):
