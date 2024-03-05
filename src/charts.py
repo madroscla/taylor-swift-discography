@@ -2,10 +2,11 @@
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.font_manager import FontProperties
 
-def credit_chart(color_dict, custom_params, plot_type, df, x_values, 
-                  y_values, hues, avg_series, title, x_label, y_label, legend_title, 
-                  rotate_x, save_png, png_name, table_bool=False, pivot_df=None):
+def credit_chart(color_dict, custom_params, plot_type, df, x_values, y_values, 
+                 hues, avg_series, title, x_label, y_label, legend_title, rotate_x, 
+                 save_png=False, png_name=None, table_bool=False, table_df=None):
     """Build musician credit chart based on given arguments.
 
        Args:
@@ -22,10 +23,10 @@ def credit_chart(color_dict, custom_params, plot_type, df, x_values,
            y_label: str, y-axis label
            legend_title: str, title for legend
            rotate_x: bool, rotates x tick labels
-           save_png: bool, saves chart to png
-           png_name: str, image name (must include .png)
-           table_bool: bool, includes values table, default False
-           pivot_df: pivoted df, needed for table, default None
+           save_png: bool, default False, saves chart to png
+           png_name: str, default None, image name (must include .png)
+           table_bool: bool, default False, includes values table
+           table_df: formatted df, default None, needed for table 
     """
     palette = sns.color_palette(color_dict.values())
     sns.set_theme(style='darkgrid', rc=custom_params)
@@ -50,8 +51,8 @@ def credit_chart(color_dict, custom_params, plot_type, df, x_values,
                     label='{} (avg)'.format(type), alpha=0.5)
 
     if table_bool == True:
-        plt.table(cellText=pivot_df.values, cellLoc='center', 
-                  rowLabels=pivot_df.index, rowColours=list(color_dict.values()),
+        plt.table(cellText=table_df.values, cellLoc='center', 
+                  rowLabels=table_df.index, rowColours=list(color_dict.values()),
                   bbox=bbox_tup)
         plt.xlabel(x_label, fontweight='bold', fontsize='medium',
                labelpad=80)
@@ -68,4 +69,52 @@ def credit_chart(color_dict, custom_params, plot_type, df, x_values,
         ax.tick_params(axis='x', labelrotation=20)
 
     if save_png == True:
-        plt.savefig('./figures/charts/{}'.format(png_name), bbox_inches='tight')
+        plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
+
+def collab_heatmap(custom_params, df, x_values, y_values, value_field, title, x_label, y_label, 
+                   rotate_x, save_png=False, png_name=None, table_bool=False, table_df=None):
+    """Build collaborator heatmap based on given arguments.
+
+       Args:
+           custom_params: dict, matplotlib custom params
+           df: pandas dataframe
+           x_values: series, column in df
+           y_values: series, column in df
+           value_field: series, column in df, cells in pivoted df
+           title: str, chart title
+           x_label: str, x-axis label
+           y_label: str, y-axis label
+           rotate_x: bool, rotates x tick labels
+           save_png: bool, default False, saves chart to png
+           png_name: str, default None, image name (must include .png)
+           table_bool: bool, default False, includes values table
+           table_df: formatted df, default None, needed for table 
+    """
+    sns.set_theme(style='darkgrid', rc=custom_params)
+    fig, ax = plt.subplots(figsize=(17, 10))
+
+    df_pivot = df.pivot_table(index=y_values, columns=x_values, 
+                              values=value_field, fill_value=0, aggfunc='sum')
+    df_pivot.sort_values(y_values, inplace=True)
+    
+    sns.heatmap(df_pivot, annot=True, linewidths=1.5, linecolor='#FFFFFF', ax=ax, cmap='PuRd', cbar=False)
+
+    if table_bool == True:
+        table = plt.table(cellText=table_df.values, cellLoc='center', 
+                  colLabels=['Totals'], edges='vertical',
+                  bbox=(1.01, 0.003, 0.06, 1.08))
+        for (row, col), cell in table.get_celld().items():
+            if (row == 0):
+                cell.set_text_props(fontproperties=FontProperties(weight='bold'))
+        
+    plt.title(title, 
+              fontweight='bold', fontsize='x-large')
+    plt.xlabel(x_label, fontweight='bold', fontsize='medium',
+               labelpad=5.5)
+    plt.ylabel(y_label, fontweight='bold', fontsize='medium', 
+               labelpad=5.5)
+    if rotate_x == True:
+        ax.tick_params(axis='x', labelrotation=40)
+
+    if save_png == True:
+        plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')

@@ -19,4 +19,4 @@ SELECT
 FROM
     collaborators_ranked
 WHERE
-    rank <= 10
+    rank <= 9
