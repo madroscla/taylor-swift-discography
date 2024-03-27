@@ -105,29 +105,36 @@ def convert_to_db(df, db_name):
 
     albums = df[['album_title','album_url', 'category']].drop_duplicates(subset=['album_title','album_url'])
     albums.reset_index(inplace=True, drop=True)
-    albums.to_sql('albums', connection, if_exists='replace')
+    albums.to_sql('albums', connection, if_exists='replace', index=False)
     
-    songs = df[['song_title','album_title', 'album_track_number', 'song_url', 'song_release_date', 'song_page_views', 'song_lyrics']]
+    songs = df[['song_title','album_title', 'album_track_number', 'song_url', 'song_release_date', 'song_page_views']]
     songs.reset_index(inplace=True, drop=True)
-    songs.to_sql('songs', connection, if_exists='replace')
+    songs.to_sql('songs', connection, if_exists='replace', index=False)
 
     artists = df[['song_title', 'song_artists']].explode(['song_artists'])
     artists.rename(columns={'song_artists': 'song_artist'}, inplace=True)
     artists.reset_index(inplace=True, drop=True)
-    artists.to_sql('artists', connection, if_exists='replace')
+    artists.to_sql('artists', connection, if_exists='replace', index=False)
     
     writers = df[['song_title', 'song_writers']].explode(['song_writers'])
     writers.rename(columns={'song_writers': 'song_writer'}, inplace=True)
     writers.reset_index(inplace=True, drop=True)
-    writers.to_sql('writers', connection, if_exists='replace')
+    writers.to_sql('writers', connection, if_exists='replace', index=False)
     
     producers = df[['song_title', 'song_producers']].explode(['song_producers'])
     producers.rename(columns={'song_producers': 'song_producer'}, inplace=True)
     producers.reset_index(inplace=True, drop=True)
-    producers.to_sql('producers', connection, if_exists='replace')
+    producers.to_sql('producers', connection, if_exists='replace', index=False)
     
     tags = df[['song_title', 'song_tags']].explode(['song_tags'])
     tags.rename(columns={'song_tags': 'song_tag'}, inplace=True)
     tags.reset_index(inplace=True, drop=True)
-    tags.to_sql('tags', connection, if_exists='replace')
+    tags.to_sql('tags', connection, if_exists='replace', index=False)
+
+    lyrics = df[['song_title', 'song_lyrics']].copy()
+    lyrics['lyric_order'] = df['song_lyrics'].apply(lambda lyrics: [index + 1 for index, _ in enumerate(lyrics)])
+    lyrics = lyrics.explode(['song_lyrics', 'lyric_order'])
+    lyrics.rename(columns={'song_lyrics': 'song_lyric'}, inplace=True)
+    lyrics.reset_index(inplace=True, drop=True)
+    lyrics.to_sql('lyrics', connection, if_exists='replace', index=False)
     connection.close()

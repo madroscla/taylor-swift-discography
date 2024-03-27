@@ -115,18 +115,14 @@ def song_get_metadata(song_url):
     return date, views
 
 def song_get_lyrics(song_url):
-    """Returns lyrics of given Genius song URL."""
+    """Returns list of lyrics of given Genius song URL."""
     song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
 
     raw_lyrics = selector.xpath('//div[@data-lyrics-container="true"]//text()').getall()
     lyrics_list = [re.sub(r'\u2005', ' ', lyric) for lyric in raw_lyrics]
-    lyrics = ' '.join(lyrics_list)
-    lyrics = re.sub(r'\[.*?\]', '', lyrics)
-    lyrics = re.sub(r'\s\s', ' ', lyrics)
-    lyrics = re.sub(r'\(\s', '(', lyrics)
-    lyrics = re.sub(r'\s\)', ')', lyrics)
-    lyrics = re.sub(r'^\s', '', lyrics)
+    brackets = re.compile(r'\[.*?\]')
+    lyrics = [lyric for lyric in lyrics_list if bool(brackets.match(lyric)) == False]
     return lyrics
 
 def song_get_tags(song_url):

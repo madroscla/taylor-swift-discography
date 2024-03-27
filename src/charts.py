@@ -93,8 +93,8 @@ def collab_heatmap(custom_params, df, x_values, y_values, value_field, title, x_
     sns.set_theme(style='darkgrid', rc=custom_params)
     fig, ax = plt.subplots(figsize=(17, 10))
 
-    df_pivot = df.pivot_table(index=y_values, columns=x_values, 
-                              values=value_field, fill_value=0, aggfunc='sum')
+    df_pivot = df.pivot_table(index=y_values, columns=x_values, values=value_field, fill_value=0, 
+                              aggfunc='sum', observed=False)
     df_pivot.sort_values(y_values, inplace=True)
     
     sns.heatmap(df_pivot, annot=True, linewidths=1.5, linecolor='#FFFFFF', ax=ax, cmap='PuRd', cbar=False)
