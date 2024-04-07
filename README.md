@@ -1,4 +1,4 @@
-# taylor_swift_discography
+# taylor-swift-discography
 This repository contains an ongoing project to compile and analyze Taylor Swift's discography, including all songs she's written for other artists. All data, including lyrics, is scraped initially from [Genius](https://genius.com/) via [parsel](https://parsel.readthedocs.io/) and placed into a SQLite database. SQL queries transform the data via [pandas](https://pandas.pydata.org/) and [sqlite3](https://docs.python.org/3/library/sqlite3.html) before ultimately being visualized via [matplotlib](https://matplotlib.org/) and [seaborn](http://seaborn.pydata.org/index.html).
 
 **Please note this project is a work-in-progress and not yet complete.**
