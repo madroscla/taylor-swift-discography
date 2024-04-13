@@ -1,0 +1,33 @@
+[[pages]]
+path = "streamlit/Home.py"
+name = "Home"
+icon = ""
+
+[[pages]]
+path = "streamlit/pages/Analytics.py"
+name = "Analytics"
+icon = ""
+is_section = true
+
+# Pages after an `is_section = true` will be indented
+[[pages]]
+path = "streamlit/pages/Discography_Overview.py"
+name = "Discography Overview"
+icon = ""
+
+[[pages]]
+path = "streamlit/pages/Collaborators.py"
+name = "Collaborators"
+icon = ""
+
+[[pages]]
+path = "streamlit/pages/Genius_Page_Views.py"
+name = "Page Views on Genius"
+icon = ""
+
+# Unless you explicitly say in_section = false`
+[[pages]]
+path = "streamlit/pages/Data.py"
+name = "Data"
+icon = ""
+in_section = false
