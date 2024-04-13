@@ -23,3 +23,13 @@ def sort_cat_column(df, column_name, cat_list):
     df.sort_values(column_name, inplace=True)
     df.reset_index(drop=True, inplace=True)
     return df
+
+def chart_params(rcParams):
+    """Setting the aesthetic parameters for the charts."""
+    install_fonts()
+    rcParams['font.family'] = 'Lato'
+    rcParams['figure.dpi'] = 300
+    rcParams['savefig.dpi'] = 150
+    custom_params = {'ytick.left': True, 
+                     'xtick.bottom': True}
+    return rcParams, custom_params

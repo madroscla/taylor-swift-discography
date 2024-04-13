@@ -41,35 +41,37 @@ def credit_chart(color_dict, custom_params, plot_type, df, x_values, y_values,
     
     # Creating barplot and drawing average lines
     if plot_type == 'bar':
-        sns.barplot(df, x=x_values, y=y_values, hue=hues, errorbar=None, ax=ax, palette=palette)
+        sns.barplot(data=df, x=x_values, y=y_values, hue=hues, errorbar=None, ax=ax, palette=palette)
     elif plot_type == 'line':
-        sns.lineplot(df, x=x_values, y=y_values, hue=hues, style=hues, 
+        sns.lineplot(data=df, x=x_values, y=y_values, hue=hues, style=hues, 
                  markers=True, dashes=False, ax=ax, palette=palette)
         
     for (type, avg) in avg_series.items():
-        plt.axhline(y=avg, color=color_dict[type], linestyle='--', 
+        ax.axhline(y=avg, color=color_dict[type], linestyle='--', 
                     label='{} (avg)'.format(type), alpha=0.5)
 
     if table_bool == True:
-        plt.table(cellText=table_df.values, cellLoc='center', 
+        ax.table(cellText=table_df.values, cellLoc='center', 
                   rowLabels=table_df.index, rowColours=list(color_dict.values()),
                   bbox=bbox_tup)
-        plt.xlabel(x_label, fontweight='bold', fontsize='medium',
+        ax.set_xlabel(x_label, fontweight='bold', fontsize='medium',
                labelpad=80)
     else:
-        plt.xlabel(x_label, fontweight='bold', fontsize='medium',
+        ax.set_xlabel(x_label, fontweight='bold', fontsize='medium',
                labelpad=5.5)
     
-    plt.title(title, 
+    ax.set_title(title, 
               fontweight='bold', fontsize='x-large')
-    plt.ylabel(y_label, fontweight='bold', fontsize='medium', 
+    ax.set_ylabel(y_label, fontweight='bold', fontsize='medium', 
                labelpad=5.5)
-    plt.legend(title=legend_title)
+    ax.legend(title=legend_title)
     if rotate_x == True:
         ax.tick_params(axis='x', labelrotation=20)
 
     if save_png == True:
-        plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
+        fig.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
+
+    return fig, ax
 
 def collab_heatmap(custom_params, df, x_values, y_values, value_field, title, x_label, y_label, 
                    rotate_x, save_png=False, png_name=None, table_bool=False, table_df=None):
@@ -100,21 +102,23 @@ def collab_heatmap(custom_params, df, x_values, y_values, value_field, title, x_
     sns.heatmap(df_pivot, annot=True, linewidths=1.5, linecolor='#FFFFFF', ax=ax, cmap='PuRd', cbar=False)
 
     if table_bool == True:
-        table = plt.table(cellText=table_df.values, cellLoc='center', 
+        table = ax.table(cellText=table_df.values, cellLoc='center', 
                   colLabels=['Totals'], edges='vertical',
                   bbox=(1.01, 0.003, 0.06, 1.08))
         for (row, col), cell in table.get_celld().items():
             if (row == 0):
                 cell.set_text_props(fontproperties=FontProperties(weight='bold'))
         
-    plt.title(title, 
+    ax.set_title(title, 
               fontweight='bold', fontsize='x-large')
-    plt.xlabel(x_label, fontweight='bold', fontsize='medium',
+    ax.set_xlabel(x_label, fontweight='bold', fontsize='medium',
                labelpad=5.5)
-    plt.ylabel(y_label, fontweight='bold', fontsize='medium', 
+    ax.set_ylabel(y_label, fontweight='bold', fontsize='medium', 
                labelpad=5.5)
     if rotate_x == True:
         ax.tick_params(axis='x', labelrotation=40)
 
     if save_png == True:
         plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
+
+    return fig, ax

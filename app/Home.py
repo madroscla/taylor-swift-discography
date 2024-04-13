@@ -1,8 +1,6 @@
 import streamlit as st
-from st_pages import show_pages_from_config, add_page_title
 
-with st.sidebar:
-    show_pages_from_config()
+st.set_page_config(page_title="Home")
 
 with st.sidebar:
     with st.popover('Choose Theme'):
