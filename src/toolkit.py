@@ -12,8 +12,8 @@ def sql_to_string(sql_file_name):
     return sql_string
 
 def install_fonts():
-    """Installs all fonts in the 'assets/font' folder."""
-    font_dir = ['/assets/fonts']
+    """Installs all fonts in the 'font' folder."""
+    font_dir = ['/fonts']
     for font in fm.findSystemFonts(font_dir):
         fm.fontManager.addfont(font)
 
