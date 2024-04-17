@@ -84,7 +84,6 @@ def content():
                         avg_per_type_unique, 'Total Unique Musicial Credits Per Era',
                         'Album/Song Era', '# Per Era (Count)', 'Credit Type', True,
                         True, 'unique_credits_per_era.png', True, unique_credit_pivot)
-    
     st.pyplot(credits_total_fig)
     
     with st.expander("See discussion"):
@@ -116,7 +115,6 @@ def content():
                         avg_per_type, 'Average Number of Musicial Credits Per Song By Era',
                         'Album/Song Era', '# Per Song (Average)', 'Credit Type', True,
                         True, 'avg_credits_per_song.png', True, avg_credit_pivot)
-    
     st.pyplot(avg_credits_fig)
     
     with st.expander("See discussion"):
@@ -146,10 +144,9 @@ def content():
     collab_totals.sort_values('collaborator', inplace=True)
     collab_totals.set_index('collaborator', inplace=True)
     
-    freq_collabs_fig, freq_collabs_ax = charts.collab_heatmap(custom_params, freq_collabs, 'era', 'collaborator', 'songs', 
+    freq_collabs_fig, freq_collabs_ax = charts.collab_heatmap(custom_params, freq_collabs, 'era', 'collaborator', 'songs', 'sum', 
                    'Most Frequent Collaborators Per Era', 'Album/Song Era', 'Collaborator Name', 
                    True, True, 'most_frequent_collabs_per_era.png', table_bool=True, table_df=collab_totals)
-    
     st.pyplot(freq_collabs_fig)
     
     with st.expander("See discussion"):
