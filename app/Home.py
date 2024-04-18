@@ -28,7 +28,6 @@ def sidebar():
         
         """, unsafe_allow_html=True)
 
-
 def content():
     st.image('assets/img/TTPDLogo.png')
     st.markdown(

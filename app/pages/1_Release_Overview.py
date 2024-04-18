@@ -38,6 +38,12 @@ def main():
 def sidebar():
     with st.sidebar:
         st.image('assets/img/TheTorturedPoetsDepartment.jpg')
+        st.markdown("""
+        <h3 style="text-align: center;">Taylor Swift - Song Discography</h3>
+
+        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!
+        
+        """, unsafe_allow_html=True)
 
 @st.cache_data
 def content():
