@@ -1,4 +1,4 @@
-pandas
-matplotlib
-sqlite
-seaborn
+pandas==2.2.2
+matplotlib==3.8.4
+sqlite==3.45.2
+seaborn==0.13.2
