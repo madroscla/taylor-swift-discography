@@ -54,8 +54,14 @@ temp_tables = toolkit.sql_to_string('collab_temp_tables.sql')
 cursor.executescript(temp_tables)
 
 def main():
+    sidebar()
     content()
 
+def sidebar():
+    with st.sidebar:
+        st.image('assets/img/TheTorturedPoetsDepartment.jpg')
+
+@st.cache_data
 def content():
     st.markdown("""
     ## Most Collaborative Eras

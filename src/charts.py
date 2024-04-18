@@ -29,8 +29,9 @@ def credit_chart(color_dict, custom_params, plot_type, df, x_values, y_values,
            table_df: formatted df, default None, needed for table 
     """
     palette = sns.color_palette(color_dict.values())
-    sns.set_theme(style='darkgrid', rc=custom_params)
+    sns.set_theme(style='white', rc=custom_params)
     fig, ax = plt.subplots(figsize=(17, 5))
+    fig.patch.set_facecolor('#EDECE8')
     
     bbox_tup = ()
     match plot_type:
@@ -93,8 +94,9 @@ def collab_heatmap(custom_params, df, x_values, y_values, value_field, aggfunc, 
            table_bool: bool, default False, includes values table
            table_df: formatted df, default None, needed for table 
     """
-    sns.set_theme(style='darkgrid', rc=custom_params)
+    sns.set_theme(style='white', rc=custom_params)
     fig, ax = plt.subplots(figsize=(17, 10))
+    fig.patch.set_facecolor('#EDECE8')
 
     df_pivot = df.pivot_table(index=y_values, columns=x_values, values=value_field, fill_value=0, 
                               aggfunc=aggfunc, observed=False)
@@ -140,9 +142,10 @@ def formats_pie(custom_params, df, wedge_values, wedge_labels, title, colors_lis
            table_bool: bool, default False, includes values table
            table_df: formatted df, default None, needed for table 
     """
-    sns.set_theme(rc=custom_params)
+    sns.set_theme(style='white', rc=custom_params)
     sns.set(font_scale = 0.8)
     fig, ax = plt.subplots(figsize=(17, 5))
+    fig.patch.set_facecolor('#EDECE8')
     ax.pie(df[wedge_values], autopct='%1.1f%%', colors=colors_list, 
            wedgeprops={"edgecolor":"#132a13"})
     ax.set_title(title, fontweight='bold', fontsize='large', x=0.9)
@@ -179,9 +182,10 @@ def release_hist(custom_params, df, x1_values, x2_values, x3_values, suptitle, t
            save_png: bool, default False, saves chart to png
            png_name: str, default None, image name (must include .png)
     """
+    sns.set_theme(style='white', rc=custom_params)
     fig, ax = plt.subplots(1, 3, figsize=(16, 6), sharey=True)
+    fig.patch.set_facecolor('#EDECE8')
     fig.suptitle(suptitle, fontweight='bold', fontsize='x-large')
-    sns.set_theme(style='darkgrid', rc=custom_params)
     sns.histplot(df, x=x1_values, discrete=True, color=colors_list[0], edgecolor=edgecolors_list[0], alpha = 1, ax=ax[0], shrink=.8)
     first_ticks = [one for one in range(min(df[x1_values]), max(df[x1_values])+1, 3)]
     ax[0].set_xticks(first_ticks)
@@ -233,11 +237,12 @@ def date_scatter(custom_params, df, x_values, y_values, size_values, title, x_la
            table_bool: bool, default False, includes values table
            table_df: formatted df, default None, needed for table 
     """
-    sns.set_theme(rc=custom_params)
-    sns.set(font_scale = 0.8)
     fig, ax = plt.subplots(figsize=(7, 5))
+    fig.patch.set_facecolor('#EDECE8')
     sns.scatterplot(df, x=x_values, y=y_values, size=size_values, hue=size_values, 
-                    palette='bone_r', edgecolor='#0d1b2a', marker='h', legend=False)
+                    palette='autumn_r', edgecolor='#0d1b2a', marker='h', legend=False)
+    sns.set_theme(style='white', rc=custom_params)
+    sns.set(font_scale = 0.8)
     ax.set_title(title, fontweight='bold', fontsize='large', x=0.75)
     ax.set_xlabel(x_label, fontweight='bold', fontsize='medium',
            labelpad=5.5)
@@ -252,10 +257,10 @@ def date_scatter(custom_params, df, x_values, y_values, size_values, title, x_la
             if (row == 0):
                 cell.set_text_props(fontproperties=FontProperties(weight='bold'))
             if (row % 2 == 0):
-                cell.set_color('#CEE0DF')
-                cell.set_edgecolor('#201F2C')
+                cell.set_color('#FEB23F')
+                cell.set_edgecolor('#A03704')
             else:
-                cell.set_edgecolor('#201F2C')
+                cell.set_edgecolor('#A03704')
         
     if save_png == True:
         plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')

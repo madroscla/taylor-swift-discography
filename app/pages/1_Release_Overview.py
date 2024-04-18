@@ -32,8 +32,14 @@ temp_table = toolkit.sql_to_string('release_temp_table.sql')
 cursor.executescript(temp_table)
 
 def main():
+    sidebar()
     content()
 
+def sidebar():
+    with st.sidebar:
+        st.image('assets/img/TheTorturedPoetsDepartment.jpg')
+
+@st.cache_data
 def content():
     release_formats = toolkit.sql_to_string('release_formats.sql')
     
