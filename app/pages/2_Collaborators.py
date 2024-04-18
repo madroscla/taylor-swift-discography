@@ -25,22 +25,7 @@ st.markdown(
 connection = sql.connect('data/taylor_swift.db')
 cursor = connection.cursor()
 
-eras = ['Taylor Swift',
-        'Fearless',
-        'Speak Now',
-        'Red',
-        '1989',
-        'reputation',
-        'Lover',
-        'folklore',
-        'evermore',
-        'Fearless (TV)',
-        'Red (TV)',
-        'Midnights',
-        'Speak Now (TV)',
-        '1989 (TV)',
-        'Non-Album Songs',
-        'Other Artist Songs']
+eras = toolkit.eras_order()
 
 credits = {
     'writer': '#6D466B',
@@ -72,8 +57,6 @@ def content():
     2. I count the *total* number of writers, producers, and artists per song before summarizing by era. I then calculate the average amount of writers, producers, and artists per song for each era, as well as the overall means for each musician type per song. Finally, I compare the eras' averages to the overall means to determine which eras are the most and least collaborative.
     """)
     
-    st.markdown("""### Unique Musicians Per Era""")
-    
     unique_credit_per_era = toolkit.sql_to_string('unique_credit_per_era.sql')
     
     unique_credit = pd.read_sql(unique_credit_per_era, connection)
@@ -87,8 +70,8 @@ def content():
     avg_per_type_unique = unique_credit.groupby('type')['unique_count'].mean().sort_values(ascending=False)
     
     credits_total_fig, credits_total_ax = charts.credit_chart(credits, custom_params, 'bar', unique_credit, 'era', 'unique_count', 'type', 
-                        avg_per_type_unique, 'Total Unique Musicial Credits Per Era',
-                        'Album/Song Era', '# Per Era (Count)', 'Credit Type', True,
+                        avg_per_type_unique, 'Total Unique Musicial Credits per Era',
+                        'Album/Song Era', '# per Era (Count)', 'Credit Type', True,
                         True, 'unique_credits_per_era.png', True, unique_credit_pivot)
     st.pyplot(credits_total_fig)
     
@@ -102,8 +85,6 @@ def content():
             
             Accounting for these issues lead me to my second approach: calculating the average musician type per indiviudal song and comparing the overall averages by era.
         """)
-        
-    st.markdown("""### Average Musicians Per Song By Era""")
     
     avg_credit_per_song = toolkit.sql_to_string('avg_credit_per_song.sql')
     
@@ -118,8 +99,8 @@ def content():
     avg_per_type = avg_credit.groupby('type')['avg_per_song'].mean().sort_values(ascending=False)
     
     avg_credits_fig, avg_credits_ax = charts.credit_chart(credits, custom_params, 'line', avg_credit, 'era', 'avg_per_song', 'type', 
-                        avg_per_type, 'Average Number of Musicial Credits Per Song By Era',
-                        'Album/Song Era', '# Per Song (Average)', 'Credit Type', True,
+                        avg_per_type, 'Average Number of Musicial Credits per Song by Era',
+                        'Album/Song Era', '# per Song (Average)', 'Credit Type', True,
                         True, 'avg_credits_per_song.png', True, avg_credit_pivot)
     st.pyplot(avg_credits_fig)
     
@@ -151,7 +132,7 @@ def content():
     collab_totals.set_index('collaborator', inplace=True)
     
     freq_collabs_fig, freq_collabs_ax = charts.collab_heatmap(custom_params, freq_collabs, 'era', 'collaborator', 'songs', 'sum', 
-                   'Most Frequent Collaborators Per Era', 'Album/Song Era', 'Collaborator Name', 
+                   'Most Frequent Collaborators per Era', 'Album/Song Era', 'Collaborator Name', 
                    True, True, 'most_frequent_collabs_per_era.png', table_bool=True, table_df=collab_totals)
     st.pyplot(freq_collabs_fig)
     

@@ -4,13 +4,15 @@ This repository contains an ongoing project to compile and analyze Taylor Swift'
 **Please note this project is a work-in-progress and not yet complete.**
 
 ## Directory
+* **[app](./app)**: contains application files for the Streamlit app
+* **[assets](./assets)**: contains third-party assets
+  * **[fonts](./assets/fonts)**: contains font `ttf` files used in charts (courtesy of [Google Fonts](https://fonts.google.com/))
+  * **[fonts](./assets/fonts)**: contains image files used in app
 * **[data](./data)**: contains pickle versions of both raw and cleaned webscraping data, as well as SQLite database file
 * **[figures](./figures)**: contains project pngs, including database schema (courtesy of [dbdiagram.io](https://dbdiagram.io))
   * **[charts](./figures/charts)**: contains all matplotlib/seaborn charts created
 * **[notebooks](./notebooks)**: contains all Juptyter Notebooks
-  * **[01_data_collection.ipynb](./notebooks/01_data_collection.ipynb)**: initial webscraping from Genius using parsel, creating dataframes and database of Taylor Swift songs and lyrics
-  * **[02_collaborator_stats.ipynb](./notebooks/02_collaborator_stats.ipynb)**: exploratory data analysis of Taylor Swift's collaborations and most frequent collaborators
-* **[fonts](./fonts)**: contains font `ttf` files used in charts (courtesy of [Google Fonts](https://fonts.google.com/))
+  * **[data_collection.ipynb](./notebooks/data_collection.ipynb)**: initial webscraping from Genius using parsel, creating dataframes and database of Taylor Swift songs and lyrics
 * **[sql](./sql)**: contains all SQL queries used in project (note: they are written in SQLite SQL)
 * **[src](./src)**: contains all Python modules used in project 
 

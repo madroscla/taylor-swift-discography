@@ -4,7 +4,7 @@ Depending on SQL dialect and database engine, this query may need to be modified
 */
 
 -- Temp table of release classifications and broken down release dates
--- Used throughout "Discography Overview" app page
+-- Used throughout "Release Overview" app page
 DROP 
     TABLE IF EXISTS temp.release_info;
 CREATE TABLE temp.release_info (

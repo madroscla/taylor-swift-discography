@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import ticker
 from matplotlib.font_manager import FontProperties
 
 def credit_chart(color_dict, custom_params, plot_type, df, x_values, y_values, 
@@ -143,17 +144,24 @@ def formats_pie(custom_params, df, wedge_values, wedge_labels, title, colors_lis
            table_df: formatted df, default None, needed for table 
     """
     sns.set_theme(style='white', rc=custom_params)
-    sns.set(font_scale = 0.8)
     fig, ax = plt.subplots(figsize=(17, 5))
     fig.patch.set_facecolor('#EDECE8')
     ax.pie(df[wedge_values], autopct='%1.1f%%', colors=colors_list, 
            wedgeprops={"edgecolor":"#132a13"})
-    ax.set_title(title, fontweight='bold', fontsize='large', x=0.9)
+    ax.set_title(title, fontweight='bold', fontsize='large', x=0.77)
     if table_bool == True:
-        ax.table(cellText=table_df.values, cellLoc='center', 
-                  rowLabels=table_df.index, rowColours=colors_list,
-                  bbox=(1.5, 0.43, 0.3, 0.2))
-        
+        colors = []
+        for i, color in enumerate(colors_list):
+            row_color = [colors_list[i], 'white']
+            colors.append(row_color)
+            
+        table = ax.table(cellText=table_df.values, cellLoc='center', colLabels=['Format', 'Songs Released'],
+                  cellColours=colors, bbox=(1, 0.35, 0.5, 0.3))
+        for (row, col), cell in table.get_celld().items():
+            cell.set_text_props(fontproperties=FontProperties(size='large'))
+            if (row == 0):
+                cell.set_text_props(fontproperties=FontProperties(weight='bold'))
+                
     if save_png == True:
         plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
 
@@ -262,6 +270,91 @@ def date_scatter(custom_params, df, x_values, y_values, size_values, title, x_la
             else:
                 cell.set_edgecolor('#A03704')
         
+    if save_png == True:
+        plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
+
+    return fig, ax
+
+def views_plots(custom_params, bar_df, barx_values, bary_values, hist_df, histx_values, suptitle, title1, title2,
+                 x1_label, x2_label, y1_label, y2_label, colors_list, edgecolors_list, save_png=False, png_name=None):
+    """Build three release histograms based on given arguments.
+
+       Args:
+           custom_params: dict, matplotlib custom params
+           bar_df: pandas dataframe for barplot
+           barx_value: str, column name in df for barplot
+           bary_values: str, column name in df for barplot
+           hist_df: pandas dataframe for histplot
+           histx_value: str, column name in df for histplot
+           suptitle: str, overall chart title
+           title1: str, title for first subplot
+           title2: str, title for second subplot
+           x1_label: str, x-axis label for barplot
+           x2_label: str, x-axis label for histplot
+           y1_label: str, y-axis label for barplot
+           y2_label: str, y-axis label for histplot
+           colors_list: list, colors for two subplots
+           edgecolors_list: list, edgecolors for two subplots
+           save_png: bool, default False, saves chart to png
+           png_name: str, default None, image name (must include .png)
+    """
+    sns.set_theme(style='white', rc=custom_params)
+    fig, ax = plt.subplots(1, 2, figsize=(17, 6), gridspec_kw={'width_ratios': [1.5, 1]})
+    fig.patch.set_facecolor('#EDECE8')
+    fig.suptitle(suptitle, fontweight='bold', fontsize='x-large')
+    sns.barplot(bar_df, y=bary_values, x=barx_values, errorbar=None, ax=ax[0], color=colors_list[0], edgecolor=edgecolors_list[0])
+    ax[0].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.0f}M'.format(x/1000000)))
+    for c in ax[0].containers:
+        labels0 = ['{:.2f}M'.format(x/1000000) for x in c.datavalues] 
+        ax[0].bar_label(c, labels=labels0, fontweight='bold', fontsize=8, label_type='center', color='white')
+    ax[0].set_title(title1, fontweight='bold', fontsize='medium')
+    ax[0].set_xlabel(x1_label, fontweight='bold', fontsize='medium',
+               labelpad=5.5)
+    ax[0].set_ylabel(y1_label, fontweight='bold', fontsize='medium')
+    
+    sns.histplot(hist_df, x=histx_values, ax=ax[1], color=colors_list[1], edgecolor=edgecolors_list[1], shrink=0.8)
+    ax[1].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.0f}M'.format(x/1000000)))
+    for c in ax[1].containers:
+        labels1 = [v if v > 0 else '' for v in c.datavalues] 
+        ax[1].bar_label(c, labels=labels1, fontweight='bold', fontsize=6)
+    ax[1].set_title(title2, fontweight='bold', fontsize='medium')
+    ax[1].set_xlabel(x2_label, fontweight='bold', fontsize='medium',
+               labelpad=5.5)
+    ax[1].set_ylabel(y2_label, fontweight='bold', fontsize='medium')
+    
+    if save_png == True:
+        plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
+
+    return fig, ax
+
+def views_box(custom_params, df, x_values, y_values, title, x_label, y_label, boxcolor, linecolor, save_png=False, png_name=None):
+    """Build three release histograms based on given arguments.
+
+       Args:
+           custom_params: dict, matplotlib custom params
+           df: pandas dataframe
+           x_values: str, column name in df
+           y_values: str, column name in df
+           title: str, chart title
+           x_label: str, x-axis label
+           y_label: str, y-axis label
+           boxcolor: str, color for box faces
+           linecolor: str, color for lines
+           save_png: bool, default False, saves chart to png
+           png_name: str, default None, image name (must include .png)
+    """
+    sns.set_theme(style='white', rc=custom_params)
+    fig, ax = plt.subplots(figsize=(17, 7))
+    fig.patch.set_facecolor('#EDECE8')
+    sns.boxplot(df, y=y_values, x=x_values, linecolor=linecolor, showmeans=True, 
+                boxprops= {'facecolor': boxcolor}, flierprops={'marker': 'd', 'markerfacecolor': linecolor, 'markersize': 3},
+                meanprops={'marker':'8', 'markerfacecolor': fig.get_facecolor(), 'markeredgecolor': linecolor})
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.0f}M'.format(x/1000000)))
+    ax.set_title(title, fontweight='bold', fontsize='medium')
+    ax.set_xlabel(x_label, fontweight='bold', fontsize='medium',
+               labelpad=5.5)
+    ax.set_ylabel(y_label, fontweight='bold', fontsize='medium')
+    
     if save_png == True:
         plt.savefig('figures/charts/{}'.format(png_name), bbox_inches='tight')
 
