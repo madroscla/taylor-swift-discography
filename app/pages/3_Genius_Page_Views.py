@@ -43,7 +43,9 @@ def sidebar():
         st.markdown("""
         <h3 style="text-align: center;">Taylor Swift - Song Discography</h3>
 
-        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!
+        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!</p>
+
+        <p style="text-align: center;">Data was last updated on <b>April 21, 2024</b>.</p>
         
         """, unsafe_allow_html=True)
 
@@ -61,6 +63,8 @@ def content():
     
     views_totals = toolkit.sql_to_string('views_totals.sql')
     era_views = pd.read_sql(views_totals, connection)
+    toolkit.abbreviate_ttpd(era_views['era'])
+    toolkit.abbreviate_ttpd(df_views['era'])
     toolkit.sort_cat_column(era_views, 'era', eras)
     toolkit.sort_cat_column(df_views, 'era', eras)
 
@@ -72,7 +76,7 @@ def content():
 
     with st.expander("See discussion"):
         st.write("""
-            From the bars, we can see that Taylor's album "folklore" has overall the highest number of total page views across its songs, being just 28 million views. "Midnights" is in second place with 23.5 million and "Lover" with 19.5 million views. From her studio albums, her debut "Taylor Swift" has the least amount of views at 2.1 million, with only her song collaborations with other artists falling below that at 1.8 million total views. Of her rerecordings, "Red (Taylor's Version)" is the most popular with 9.6 million views, while "Fearless (Taylor's Version)" is the least popular at 3.3 million views. It's possible to conclude from this graph that "folklore" is Taylor Swift's most popular album on Genius in terms of traffic to the album's songs.
+            From the bars, we can see that Taylor's album "folklore" has overall the highest number of total page views across its songs, being just 28 million views. "Midnights" is in second place with 23.6 million and "Lover" with 19.7 million views. From her studio albums, her debut "Taylor Swift" has the least amount of views at 2.1 million, with only her song collaborations with other artists falling below that at 1.8 million total views. Of her rerecordings, "Red (Taylor's Version)" is the most popular with 9.7 million views, while "Fearless (Taylor's Version)" is the least popular at 3.3 million views. It's possible to conclude from this graph that "folklore" is Taylor Swift's most popular album on Genius in terms of traffic to the album's songs.
 
             There are a few problems with this approach, as illustrated by the accompanying histogram: the data is skewed to the right, with most song pages having under 1 million views. Because of this, these totals are most likely influenced by outliers, or individual songs with high amounts of views. To counteract that, we plot the distributions and see how the medians compare to one another.
             """)
@@ -83,9 +87,9 @@ def content():
 
     with st.expander("See discussion"):
         st.write("""
-            All of Taylor's eras are influenced in some capacity by outliers in terms of page views; all of their means (represented by white dots) fall to the right of their medians (represented by the vertical bars in the boxes). The most egregious example is "Red (Taylor's Version)," whose song "All Too Well (10 Minute Version) (Taylor’s Version) [From The Vault]" is the most viewed Taylor Swift song on Genius at 4.6 million views, making up over half of its calculated page view totals from the previous visualization.
+            All of Taylor's eras are influenced in some capacity by outliers in terms of page views; all of their means (represented by white dots) fall to the right of their medians (represented by the vertical bars in the boxes). The most egregious example is "Red (Taylor's Version)," whose song "All Too Well (10 Minute Version) (Taylor’s Version) [From The Vault]" is the most viewed Taylor Swift song on Genius at 4.7 million views, making up nearly half of its calculated page view totals from the previous visualization.
 
-            Looking at medians, "folklore" has the highest, meaning on average songs from "folklore" get more page views than songs from other albums or eras, the median being around 1.4 million views per page. With this statistic, we can argue that "folklore" is still the popular Taylor Swift album on Genius, which matches the conclusion of the previous approach. However, "reputation" has the second highest median of around 1.1 million views per song page, which differs from the first approach having "reputation" being the fifth most popular at just under 17 million total page views. This means that songs from "reputation" on average get more page views than other song pages from different albums/eras, even if the total for the album is lower overall.
+            Looking at medians, "folklore" has the highest, meaning on average songs from "folklore" get more page views than songs from other albums or eras, the median being around 1.4 million views per page. With this statistic, we can argue that "folklore" is still the popular Taylor Swift album on Genius, which matches the conclusion of the previous approach. However, "reputation" has the second highest median of around 1.1 million views per song page, which differs from the first approach having "reputation" being the sixth most popular at just under 17 million total page views. This means that songs from "reputation" on average get more page views than other song pages from different albums/eras, even if the total for the album is lower overall.
 
             In terms of lowest medians, all four of Taylor's rercorded albums have very low median views-per-page, each having around 0.1 million (100,000) per song, and all rerecorded albums have lower medians than their original counterparts. This could be due to how recently the albums were released, as the original albums have existed on Genius for much longer, but in my opinion it's more likely that Genius suggests the song pages from the original albums more often than it does for their rerecorded counterparts when the user searches for the song title. The only era that is lower than the rerecorded albums is Taylor's non-album songs, such as movie soundtrack releases or promotional singles, which have the lowest median views-per-page.
             """)

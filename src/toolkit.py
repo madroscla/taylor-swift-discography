@@ -17,6 +17,7 @@ eras = ['Taylor Swift',
         'Midnights',
         'Speak Now (TV)',
         '1989 (TV)',
+        'TTPD',
         'Non-Album Songs',
         'Other Artist Songs']
 
@@ -43,6 +44,11 @@ def sort_cat_column(df, column_name, cat_list):
     df.sort_values(column_name, inplace=True)
     df.reset_index(drop=True, inplace=True)
     return df
+
+def abbreviate_ttpd(df_column):
+    """Abbreviates 'The Tortured Poets Department' to 'TTPD' to save space."""
+    df_column = df_column.replace('The Tortured Poets Department', 'TTPD', inplace=True)
+    return df_column
 
 def chart_params(rcParams):
     """Setting the aesthetic parameters for the charts."""
