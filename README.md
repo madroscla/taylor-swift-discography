@@ -5,6 +5,8 @@ This repository contains an ongoing project to compile and analyze Taylor Swift'
 
 ## This project is currently deployed on [Streamlit](https://taylor-swift-discography.streamlit.app/)!
 
+![streamlit gif](./figures/streamlit_demo.gif)
+
 ## Directory
 * **[app](./app)**: contains application files for the Streamlit app
 * **[assets](./assets)**: contains third-party assets
