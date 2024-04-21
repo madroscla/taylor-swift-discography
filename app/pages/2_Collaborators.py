@@ -48,7 +48,9 @@ def sidebar():
         st.markdown("""
         <h3 style="text-align: center;">Taylor Swift - Song Discography</h3>
 
-        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!
+        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!</p>
+
+        <p style="text-align: center;">Data was last updated on <b>April 21, 2024</b>.</p>
         
         """, unsafe_allow_html=True)
 
@@ -66,6 +68,7 @@ def content():
     unique_credit_per_era = toolkit.sql_to_string('unique_credit_per_era.sql')
     
     unique_credit = pd.read_sql(unique_credit_per_era, connection)
+    toolkit.abbreviate_ttpd(unique_credit['era'])
     toolkit.sort_cat_column(unique_credit, 'era', eras)
     
     # Pivoting dataframe for chart table
@@ -85,7 +88,7 @@ def content():
         st.write("""
             Looking at the bars, we can clearly see which eras had the most unique collaborators. More than any album or rerecording, Taylor works with the more unique musicians when collaborating on other artists' songs or when creating non-album songs, as the former's totals for producers and artists and the latter's total for writers are higher than any other era. Following those two is "Red (Taylor's Version)," which has the second highest total for each artists and third highest for both producers and writers. For the lowest totals, "Speak Now (Taylor's Version)" only has 1 unique writer for the era, "Fearless" has only 2 unique producers, and the debut "Taylor Swift" only has 1 unique artist.
             
-            To determine her most and least collaborative eras, we'll look at where the totals fall relative the overall means per type (represented by horizontal dash lines). For her most collaborative eras, both her collaborations on other artist's songs and her non-album works fall above the means for all three musician types; "Red (Taylor's Version)" also has totals above all three means, being her only studio album or rerecording to do so. For least collaborative, several eras fall below the overall means for all three types: the self-titled "Taylor Swift," "Fearless," "Speak Now," "folklore," "evermore," and "Speak Now (Taylor's Version)." This makes it difficult to narrow down which albums could be considered the least collaborative.
+            To determine her most and least collaborative eras, we'll look at where the totals fall relative the overall means per type (represented by horizontal dash lines). For her most collaborative eras, both her collaborations on other artist's songs and her non-album works fall above the means for all three musician types; "Red (Taylor's Version)" also has totals above all three means, being her only studio album or rerecording to do so. For least collaborative, several eras fall below the overall means for all three types: the self-titled "Taylor Swift," "Fearless," "Speak Now," "folklore," "evermore,","Speak Now (Taylor's Version)," and "The Tortured Poets Department." This makes it difficult to narrow down which albums could be considered the least collaborative.
             
             I also have other issues with determinining collaborativeness through this approach: one issue is that it doesn't take into consideration the lengths of albums and how that can skew the counts of unique musicians. For instance, "Red (Taylor's Version)" has over 30 songs associated with the era, while "folklore" and "evermore" only have 17 each; even if "folklore" and "evermore" featured unique writers, producers, and/or artists for every track, it's still possible for them to fall below "Red (Taylor's Version)" in totals due to having less songs overall. Also, this method doesn't account for variability between individual songs when it comes to writers, producers, or artists. For example, "Midnights" features a track, "Lavender Haze," that has 6 unique writers alone while also featuring a track, "Bigger Than the Whole Sky," that is solely written by Taylor herself. That variation is not accounted for when totaling unique writers between the two tracks, which would still be a total of 6.
             
@@ -95,6 +98,7 @@ def content():
     avg_credit_per_song = toolkit.sql_to_string('avg_credit_per_song.sql')
     
     avg_credit = pd.read_sql(avg_credit_per_song, connection)
+    toolkit.abbreviate_ttpd(avg_credit['era'])
     toolkit.sort_cat_column(avg_credit, 'era', eras)
     
     # Pivoting dataframe for chart table
@@ -112,7 +116,7 @@ def content():
     
     with st.expander("See discussion"):
         st.write("""
-            This analytical approach gives us a more nuanced way to which eras were more collaborative in terms of individual musician types. For instance, both "reputation" and "Midnights" were highly collaborative eras, with the former having the highest average of writers per song (3.13 writers) and the latter having the highest average of producers per song (2.46 producers). Meanwhile, both "Speak Now" and "Speak Now (Taylor's Version)" have the lowest average of 1.11 and 1.0 writers per song respectively, the rerecording being solely written by Taylor herself, and the self-titled "Taylor Swift" has the lowest average of 1.14 producers per song, followed by "evermore" at 1.41 producers. Her collaborations with artists tend to be more steady, many albums having few vocal features, but "Red (Taylor's Version)" boasts the highest average of her studio albums and rerecordings, of 1.22 artists per song. Unsurprisingly, this is surpassed by her collaboration songs on other artists' albums, which have an average artist-per-song of 1.87 and usually feature another artist alongside Taylor Swift.
+            This analytical approach gives us a more nuanced way to which eras were more collaborative in terms of individual musician types. For instance, both "reputation" and "Midnights" were highly collaborative eras, with the former having the highest average of writers per song (3.13 writers) and the latter having the highest average of producers per song (2.46 producers). Meanwhile, both "Speak Now" and "Speak Now (Taylor's Version)" have the lowest average of 1.1 and 1.0 writers per song respectively, the rerecording being solely written by Taylor herself, and the self-titled "Taylor Swift" has the lowest average of 1.14 producers per song, followed by "evermore" at 1.41 producers. Her collaborations with artists tend to be more steady, many albums having few vocal features, but "Red (Taylor's Version)" boasts the highest average of her studio albums and rerecordings, of 1.22 artists per song. Unsurprisingly, this is surpassed by her collaboration songs on other artists' albums, which have an average artist-per-song of 1.87 and usually feature another artist alongside Taylor Swift.
             
             To determine her most and least collaborative eras, we'll once again look at where the average values fall relative the overall means (represented by horizontal dash lines). Three eras fall below all three means: "Speak Now", "Red", and "folklore." That means that, according to both this approach and the previous approach, "Speak Now" and "folklore" are considered Taylor's least collaborative eras. Interestingly, no era has all values fall above the overall means; "Lover" has higher averages for both writers-per-song and producers-per-song, but its average for artists-per-song is equal to the overall mean for artists-per-song. Regardless, its values being at-or-above each mean makes it the most collaborative era via this approach, despite not being considered especially collaborative via the previous approach.
             
@@ -130,6 +134,7 @@ def content():
     most_frequent_collabs = toolkit.sql_to_string('most_frequent_collaborators.sql')
     
     freq_collabs = pd.read_sql(most_frequent_collabs, connection)
+    toolkit.abbreviate_ttpd(freq_collabs['era'])
     toolkit.sort_cat_column(freq_collabs, 'era', eras)
     
     collab_totals = freq_collabs.loc[:,('collaborator', 'total_songs')]
@@ -144,7 +149,7 @@ def content():
     
     with st.expander("See discussion"):
         st.write("""
-            From this heatmap, we can see in which eras Taylor's most frequent collaborators worked on the most songs. Jack Antonoff has the clear lead, collaborating on a total of 72 songs across Taylor's discography, with 21 songs alone being from "Midnights." We can also see at what point Jack began to work with Taylor; his first collaborations were during "1989" and he has since been a mainstay in every studio album and rerecording.
+            From this heatmap, we can see in which eras Taylor's most frequent collaborators worked on the most songs. Jack Antonoff has the clear lead, collaborating on a total of 87 songs across Taylor's discography, with 21 songs alone being from "Midnights." We can also see at what point Jack began to work with Taylor; his first collaborations were during "1989" and he has since been a mainstay in every studio album and rerecording.
             
             Meanwhile, the #2 collaborator, Nathan Chapman, stops working with Taylor shortly after she transitions from country to pop music, only working on 1 song during "1989" despite being credited several times on her previous albums. Interestingly, he does not return to produce the songs on the rerecorded versions of "Fearless," "Speak Now" and "Red." This is despite several collaborators from the original albums coming back for the rerecorded versions, like Liz Rose for "Fearless (Taylor's Version)" and Max Martin and Shellback for "1989 (Taylor's Version)." Instead, Christopher Rowe, Taylor's #3 collaborator, seems to step in to do the bulk of the rerecording collaborations, despite not having worked with Taylor prior to "Fearless (Taylor's Version)."
             """)

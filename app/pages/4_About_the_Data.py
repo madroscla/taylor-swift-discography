@@ -27,7 +27,9 @@ def sidebar():
         st.markdown("""
         <h3 style="text-align: center;">Taylor Swift - Song Discography</h3>
 
-        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!
+        <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!</p>
+
+        <p style="text-align: center;">Data was last updated on <b>April 21, 2024</b>.</p>
         
         """, unsafe_allow_html=True)
 

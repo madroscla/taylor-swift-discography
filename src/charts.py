@@ -147,7 +147,7 @@ def formats_pie(custom_params, df, wedge_values, wedge_labels, title, colors_lis
     fig, ax = plt.subplots(figsize=(17, 5))
     fig.patch.set_facecolor('#EDECE8')
     ax.pie(df[wedge_values], autopct='%1.1f%%', colors=colors_list, 
-           wedgeprops={"edgecolor":"#132a13"})
+           wedgeprops={"edgecolor":"#132a13"}, textprops={"fontsize":9})
     ax.set_title(title, fontweight='bold', fontsize='large', x=0.77)
     if table_bool == True:
         colors = []
