@@ -11,8 +11,10 @@ This repository contains an ongoing project to compile and analyze Taylor Swift'
 * **[app](./app)**: contains application files for the Streamlit app
 * **[assets](./assets)**: contains third-party assets
   * **[fonts](./assets/fonts)**: contains font `ttf` files used in charts (courtesy of [Google Fonts](https://fonts.google.com/))
-  * **[fonts](./assets/fonts)**: contains image files used in app
+  * **[img](./assets/img)**: contains image files used in app
 * **[data](./data)**: contains pickle versions of both raw and cleaned webscraping data, as well as SQLite database file
+  * **[csv](./data/csv)**: contains CSV files used to add/remove data from dataframe
+  * **[kaggle](./data/kaggle)**: contains CSV file used for [Kaggle dataset](https://www.kaggle.com/datasets/madroscla/taylor-swift-released-song-discography-genius)
 * **[figures](./figures)**: contains project pngs, including database schema (courtesy of [dbdiagram.io](https://dbdiagram.io))
   * **[charts](./figures/charts)**: contains all matplotlib/seaborn charts created
 * **[notebooks](./notebooks)**: contains all Juptyter Notebooks
