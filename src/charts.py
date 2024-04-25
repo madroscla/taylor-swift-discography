@@ -306,11 +306,12 @@ def views_plots(custom_params, bar_df, barx_values, bary_values, hist_df, histx_
     ax[0].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.0f}M'.format(x/1000000)))
     for c in ax[0].containers:
         labels0 = ['{:.2f}M'.format(x/1000000) for x in c.datavalues] 
-        ax[0].bar_label(c, labels=labels0, fontweight='bold', fontsize=8, label_type='center', color='white')
+        ax[0].bar_label(c, labels=labels0, fontweight='bold', fontsize=8, padding= 2, label_type='edge')
     ax[0].set_title(title1, fontweight='bold', fontsize='medium')
     ax[0].set_xlabel(x1_label, fontweight='bold', fontsize='medium',
                labelpad=5.5)
     ax[0].set_ylabel(y1_label, fontweight='bold', fontsize='medium')
+    ax[0].margins(x=0.1)
     
     sns.histplot(hist_df, x=histx_values, ax=ax[1], color=colors_list[1], edgecolor=edgecolors_list[1], shrink=0.8)
     ax[1].xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:.0f}M'.format(x/1000000)))

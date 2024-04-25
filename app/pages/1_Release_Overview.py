@@ -43,7 +43,7 @@ def sidebar():
 
         <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!</p>
 
-        <p style="text-align: center;">Data was last updated on <b>April 21, 2024</b>.</p>
+        <p style="text-align: center;">Data was last updated on <b>April 25, 2024</b>.</p>
         
         """, unsafe_allow_html=True)
 
