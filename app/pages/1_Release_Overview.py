@@ -32,7 +32,7 @@ rcParams, custom_params = toolkit.chart_params(rcParams)
 temp_table = toolkit.sql_to_string('release_temp_table.sql')
 cursor.executescript(temp_table)
 
-today = date.today()
+today = date(2024, 5, 5)
 today_format = today.strftime("%B %-d, %Y")
 
 def main():

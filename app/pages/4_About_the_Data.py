@@ -18,7 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-today = date.today()
+today = date(2024, 5, 5)
 today_format = today.strftime("%B %-d, %Y")
 
 def main():
