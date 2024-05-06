@@ -140,17 +140,19 @@ def song_get_credits(song_url, credit):
        return list of names.
     """
     if credit == 'writers':
-        query = 'Written By'
-    elif credit == 'producers':
-        query = 'Produced By'
+        query = ['Writer', 'Writers']
+    if credit == 'producers':
+        query = ['Producer', 'Producers']
     
     song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
-    raw_list = selector.xpath(
-        '//div[@class="SongInfo__Credit-nekw6x-3 fognin" and contains(., "{}")]//text()'.format(query)
-    ).getall()
+    div_path = '//div[contains(@class,"SongInfo__Credit")]/div[preceding-sibling::div[contains(@class,"SongInfo__Label") and text()="{}"]]//text()'
     
-    dropped = ['Written By', 'Produced By', ' & ', ', ']
+    raw_list = selector.xpath(div_path.format(query[0])).getall()
+    if raw_list == []:
+        raw_list = selector.xpath(div_path.format(query[1])).getall()
+
+    dropped = [' & ', ', ']
     credits = [name for name in raw_list if name not in dropped]
     return credits
 
