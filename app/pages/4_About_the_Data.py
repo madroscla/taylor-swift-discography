@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+from datetime import date
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
@@ -11,11 +12,14 @@ st.set_page_config(page_title="About the Data")
 st.markdown(
     """
     <style>
-        section.main > div {max-width:75rem}
+        section.main > div {max-width:65rem}
     </style>
     """,
     unsafe_allow_html=True
 )
+
+today = date(2024, 6, 27)
+today_format = today.strftime("%B %-d, %Y")
 
 def main():
     sidebar()
@@ -29,9 +33,9 @@ def sidebar():
 
         <p style="text-align: center;">This is an ongoing, open-source project. Follow along on <a href='https://github.com/madroscla/taylor-swift-discography'>Github</a>!</p>
 
-        <p style="text-align: center;">Data was last updated on <b>April 25, 2024</b>.</p>
+        <p style="text-align: center;">Data was last updated on <b>{}</b>.</p>
         
-        """, unsafe_allow_html=True)
+        """.format(today_format), unsafe_allow_html=True)
 
 @st.cache_data
 def content():
