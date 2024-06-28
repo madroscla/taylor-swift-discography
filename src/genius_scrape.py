@@ -72,7 +72,7 @@ def song_get_artists(song_url):
     song_page = requests.get(song_url).text
     selector = Selector(text=song_page)
 
-    raw_artists = selector.xpath('//div[@class="HeaderArtistAndTracklistdesktop__Container-sc-4vdeb8-0 hjExsS"]/span/span//text()').get()
+    raw_artists = selector.xpath('//div[contains(@class,"HeaderArtistAndTracklistdesktop__ListArtists")]/span/span//text()').get()
     artists = re.split(r',\s|\s&\s', raw_artists)
 
     feat_check = selector.xpath('//p[contains(@class,"HeaderCredits__Label")]/text()').get()

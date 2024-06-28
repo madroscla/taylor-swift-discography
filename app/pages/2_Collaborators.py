@@ -39,7 +39,7 @@ rcParams, custom_params = toolkit.chart_params(rcParams)
 temp_tables = toolkit.sql_to_string('collab_temp_tables.sql')
 cursor.executescript(temp_tables)
 
-today = date(2024, 5, 5)
+today = date(2024, 6, 27)
 today_format = today.strftime("%B %-d, %Y")
 
 def main():
@@ -153,7 +153,7 @@ def content():
     
     with st.expander("See discussion"):
         st.write("""
-            From this heatmap, we can see in which eras Taylor's most frequent collaborators worked on the most songs. Jack Antonoff has the clear lead, collaborating on a total of 87 songs across Taylor's discography, with 21 songs alone being from "Midnights." We can also see at what point Jack began to work with Taylor; his first collaborations were during "1989" and he has since been a mainstay in every studio album and rerecording.
+            From this heatmap, we can see in which eras Taylor's most frequent collaborators worked on the most songs. Jack Antonoff has the clear lead, collaborating on a total of 88 songs across Taylor's discography, with 21 songs alone being from "Midnights." We can also see at what point Jack began to work with Taylor; his first collaborations were during "1989" and he has since been a mainstay in every studio album and rerecording.
             
             Meanwhile, the #2 collaborator, Nathan Chapman, stops working with Taylor shortly after she transitions from country to pop music, only working on 1 song during "1989" despite being credited several times on her previous albums. Interestingly, he does not return to produce the songs on the rerecorded versions of "Fearless," "Speak Now" and "Red." This is despite several collaborators from the original albums coming back for the rerecorded versions, like Liz Rose for "Fearless (Taylor's Version)" and Max Martin and Shellback for "1989 (Taylor's Version)." Instead, Christopher Rowe, Taylor's #3 collaborator, seems to step in to do the bulk of the rerecording collaborations, despite not having worked with Taylor prior to "Fearless (Taylor's Version)."
             """)
