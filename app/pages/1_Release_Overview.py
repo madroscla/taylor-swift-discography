@@ -32,7 +32,7 @@ rcParams, custom_params = toolkit.chart_params(rcParams)
 temp_table = toolkit.sql_to_string('release_temp_table.sql')
 cursor.executescript(temp_table)
 
-today = date(2024, 5, 5)
+today = date(2024, 6, 27)
 today_format = today.strftime("%B %-d, %Y")
 
 def main():
@@ -71,7 +71,7 @@ def content():
 
     with st.expander("See discussion"):
         st.write("""
-            From this pie chart, we can clearly see that songs released on studio albums make up the vast majority of Taylor's discography, accounting for over 59%. Interestingly, nearly a third of her discography includes the rerecorded versions of her earlier songs, despite only beginning her rerecording process in the past five years. Contributions on other artists' studio albums and miscellanious releases only make up a small percentage of her discography, being just udner 13% combined.
+            From this pie chart, we can clearly see that songs released on studio albums make up the vast majority of Taylor's discography, accounting for over 59%. Interestingly, nearly a third of her discography includes the rerecorded versions of her earlier songs, despite only beginning her rerecording process in the past five years. Contributions on other artists' studio albums and miscellanious releases only make up a small percentage of her discography, being just over 13% combined.
             """)
 
     st.markdown("""
@@ -94,7 +94,7 @@ def content():
         st.write("""
             In terms of her most productive years, Taylor has released most of her music between 2019 and 2024. This range makes sense, as Taylor not only released two studio albums in 2020, but began her rerecording process, releasing two rerecorded albums both in 2021 and 2023. Outside of this range, her most productive year was 2012 with the release of her studio album "Red," along with some non-album releases like her contributions to The Hunger Games' movie soundtrack. Her least productive year was 2015, with only one song being released, followed by a three-way tie between 2013, 2016, and 2018. All three of these years were between studio album releases, with Taylor usually touring internationally, so it's not surprising to see these years have limited releases. Still, it's interesting to compare these touring years with her constant productivity in 2023 and 2024, despite being on the Eras Tour.
 
-            For productive months, Taylor tends to release her songs in October, with nearly a third of her entire catalogue being released then. Other months of high activity are November, April, and July, having 60, 59, and 41 songs releases respectively. She does not often release music in February, June, or January, the former only having 3 song releases and the latter two each having 5 song releases. Taylor also tends to release songs later in the month, most being released between the 19th and 27th days of the month. She also tends to release songs on the 12th, 7th, 9th, and 11th days of the month, falling within the first two weeks of a month.
+            For productive months, Taylor tends to release her songs in October, with nearly a third of her entire catalogue being released then. Other months of high activity are November, April, and July, having 60, 59, and 41 songs releases respectively. She does not often release music in February or January, the former only having 3 song releases and the latter having 5 song releases. Taylor also tends to release songs later in the month, most being released between the 19th and 27th days of the month. She also tends to release songs on the 12th, 7th, 9th, and 11th days of the month, falling within the first two weeks of a month.
             """)
 
     month_day_distribution = toolkit.sql_to_string('month_day_distribution.sql')
